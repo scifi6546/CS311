@@ -54,11 +54,11 @@ class InventoryItem{
 		};
 
 
-
+		//Preconditions Inventory item is valid
 		bool operator==(const InventoryItem &item)const{
 			return item.getName()==getName()&&item.getNumber()==getNumber();	
 		};
-
+		//Preconditions Inventory item is valid
 		bool operator!=(const InventoryItem &item)const{
 			return !operator==(item);	
 		};
