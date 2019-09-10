@@ -44,6 +44,7 @@ class InventoryItem{
 		bool empty()const{
 			return _number==0;	
 		}
+		//returns string in form "{name} ({number})"
 		std::string toString()const{
 			std::string out="";
 			out+=_name;
