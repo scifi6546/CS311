@@ -7,35 +7,32 @@
 template<typename T>
 class KSArray{
 	public:
-	KSArray()noexcept:_size{8}{
+
+	KSArray():_size{8}{
 		_makeObjs(_size);
 		
 	}
 	//assumes that size_in can be sucessfully allocated
-	KSArray(int size_in)noexcept:_size{static_cast<size_type>(size_in)}{
+	KSArray(int size_in):_size{static_cast<size_type>(size_in)}{
 		_makeObjs(_size);
 	}
 
-	KSArray(int size,T value)noexcept{
+	KSArray(int size,T value){
 		_makeObjsValue(size,value);	
 	}
 
-	KSArray(const KSArray &in)noexcept{
+	KSArray(const KSArray &in){
 		operator=(in);
 
 	}
 	~KSArray(){
-		if(_data!=NULL){
-			free(_data);
-			_data=NULL;
-		}
-		return;
+		_freeData();
 	}
 	
-	KSArray(KSArray && in)noexcept{
+	KSArray(KSArray && in){
 		_data = in.begin();
 	}
-	KSArray operator=(const KSArray &in){
+	KSArray& operator=(const KSArray &in){
 
 		//ugly I know this iterates through each element in 
 		//the target array and copies the item over
@@ -48,9 +45,11 @@ class KSArray{
 		}
 		return *this;
 	}
-	KSArray operator=(KSArray &&in)noexcept{
+	KSArray& operator=(KSArray &&in){
 
 		_data = in._data;
+		_size = in._size;
+		in._ownsData=false;
 		return *this;
 	}
 	//preconditions
@@ -59,13 +58,16 @@ class KSArray{
 	//because for small types an int may not be 
 	//large enough to address all of avalible memory
 	T operator[](const int& index)const{
-		if(index<_size){
+		if(index<_size&&index>=0){
 			return _data[index];
+		}else{
+
+			throw std::out_of_range("Out of range");
 		}
 	}
 	T& operator[](const int& index){
 	
-		if(index<_size){
+		if(index<_size && index>=0){
 			return _data[index];
 		}else{
 			throw std::out_of_range("Out of range");
@@ -91,7 +93,9 @@ class KSArray{
 			//if any value is not the same
 			//immediatly returns false
 			for(int i=0;i<size();i++){
-				if(operator[](i)!=rhs[i]){
+				T foo = rhs[i];
+				T bar = _data[i];
+				if(foo!=bar){
 					return false;
 				}
 			}
@@ -161,6 +165,10 @@ class KSArray{
 	private:
 		//pointer to data
 		T* _data=NULL;
+		//checks if the object owns the data (eg a move ctor was not
+		//used on the object)
+		bool _ownsData=true;
+		//length of array
 		size_type _size=0;
 
 		//this constructs objects with default value
@@ -168,6 +176,10 @@ class KSArray{
 		void _makeObjs(size_type size){
 			_size=size;
 			_data = (T*) malloc(_size*sizeof(T));
+			if(_data==NULL){
+
+				throw std::bad_alloc();
+			}
 			T* temp_data = _data;
 			for(size_type i=0;i<size;i++){
 				temp_data=new T();
@@ -180,6 +192,9 @@ class KSArray{
 
 			_size=size;
 			_data = (T*) malloc(_size*sizeof(T));
+			if(_data==NULL){
+				throw std::bad_alloc();
+			}
 			T* temp_data = _data;
 			for(size_type i=0;i<size;i++){
 				temp_data=new T(value);
@@ -193,6 +208,16 @@ class KSArray{
 			}else{
 				throw std::bad_alloc();
 			}
+		}
+		void _freeData(){
+			if(_data!=NULL && _ownsData){
+				free(_data);
+				_data=NULL;
+				_ownsData=false;
+				return;
+			}
+			return;
+
 		}
 
 };

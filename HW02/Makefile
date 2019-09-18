@@ -1,4 +1,4 @@
-CFLAGS = -std=c++17
+CFLAGS = -std=c++17 -ggdb
 CC=g++
 main:
 	$(MAKE) catch
@@ -11,3 +11,6 @@ main_cpp: ksarray_test_main.cpp
 run:
 	$(MAKE) main
 	./out
+grind:
+	$(MAKE) main
+	valgrind ./out
