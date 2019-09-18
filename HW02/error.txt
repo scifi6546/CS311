@@ -1,0 +1,12 @@
+make main
+make[1]: Entering directory '/home/nick/programming/classes/CS311/HW02'
+make catch
+make[2]: Entering directory '/home/nick/programming/classes/CS311/HW02'
+clang -c -std=c++17 ksarray_test_suites.cpp -o test.o
+make[2]: Leaving directory '/home/nick/programming/classes/CS311/HW02'
+make main_cpp
+make[2]: Entering directory '/home/nick/programming/classes/CS311/HW02'
+clang -c -std=c++17 ksarray_test_main.cpp -o main.o
+make[2]: Leaving directory '/home/nick/programming/classes/CS311/HW02'
+clang -std=c++17 test.o main.o -o out
+make[1]: Leaving directory '/home/nick/programming/classes/CS311/HW02'

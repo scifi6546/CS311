@@ -3,20 +3,55 @@
 #include <cstdint>
 #include <cstddef>
 #include <cstdlib>
+#include <stdexcept>
 template<typename T>
 class KSArray{
 	public:
-	KSArray():_size{8}{
+	KSArray()noexcept:_size{8}{
 		_makeObjs(_size);
 		
 	}
 	//assumes that size_in can be sucessfully allocated
-	KSArray(int size_in):_size{size_in}{
+	KSArray(int size_in)noexcept:_size{static_cast<size_type>(size_in)}{
 		_makeObjs(_size);
 	}
 
-	KSArray(int size,T value){
+	KSArray(int size,T value)noexcept{
 		_makeObjsValue(size,value);	
+	}
+
+	KSArray(const KSArray &in)noexcept{
+		operator=(in);
+
+	}
+	~KSArray(){
+		if(_data!=NULL){
+			free(_data);
+			_data=NULL;
+		}
+		return;
+	}
+	
+	KSArray(KSArray && in)noexcept{
+		_data = in.begin();
+	}
+	KSArray operator=(const KSArray &in){
+
+		//ugly I know this iterates through each element in 
+		//the target array and copies the item over
+		_alloc(in.size());
+		//getting a pointer to the zeroth element
+		T* temp_ptr = _data;
+		for(int i=0;i<in.size();i++){
+			temp_ptr = new T(in[i]);
+			temp_ptr++;
+		}
+		return *this;
+	}
+	KSArray operator=(KSArray &&in)noexcept{
+
+		_data = in._data;
+		return *this;
 	}
 	//preconditions
 	//size<obj.size()
@@ -32,6 +67,8 @@ class KSArray{
 	
 		if(index<_size){
 			return _data[index];
+		}else{
+			throw std::out_of_range("Out of range");
 		}
 	
 	}
@@ -123,8 +160,8 @@ class KSArray{
 	typedef std::uint_fast64_t size_type;
 	private:
 		//pointer to data
-		T* _data;
-		size_type _size;
+		T* _data=NULL;
+		size_type _size=0;
 
 		//this constructs objects with default value
 		//assumes allocated size is able to be allocated
@@ -147,6 +184,14 @@ class KSArray{
 			for(size_type i=0;i<size;i++){
 				temp_data=new T(value);
 				temp_data++;
+			}
+		}
+		void _alloc(size_type length){
+			if(_data==NULL){
+				_size=length;
+				_data = (T*)calloc(_size,sizeof(T));
+			}else{
+				throw std::bad_alloc();
 			}
 		}
 
