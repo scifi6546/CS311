@@ -1,0 +1,4 @@
+make main
+make[1]: Entering directory '/home/nick/programming/classes/CS311/HW02'
+g++ ksarray_test_main.cpp  ksarray_test_suites.cpp -o out
+make[1]: Leaving directory '/home/nick/programming/classes/CS311/HW02'
