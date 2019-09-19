@@ -1,6 +1,7 @@
 #ifndef KSARRAY
 #define KSARRAY
 #include <cstdint>
+#include <stdio.h>
 #include <cstddef>
 #include <cstdlib>
 #include <stdexcept>
@@ -57,7 +58,8 @@ class KSArray{
 	//int is not the best choice for an index
 	//because for small types an int may not be 
 	//large enough to address all of avalible memory
-	T operator[](const int& index)const{
+	T operator[](const int& index_in)const{
+		size_type index = (size_type) index_in;
 		if(index<_size&&index>=0){
 			return _data[index];
 		}else{
@@ -65,8 +67,9 @@ class KSArray{
 			throw std::out_of_range("Out of range");
 		}
 	}
-	T& operator[](const int& index){
+	T& operator[](const int& index_in){
 	
+		size_type index = (size_type) index_in;
 		if(index<_size && index>=0){
 			return _data[index];
 		}else{
@@ -177,7 +180,7 @@ class KSArray{
 			_size=size;
 			_data = (T*) malloc(_size*sizeof(T));
 			if(_data==NULL){
-
+				printf("bad alloc on _makeObjs\n");
 				throw std::bad_alloc();
 			}
 			T* temp_data = _data;
@@ -193,6 +196,7 @@ class KSArray{
 			_size=size;
 			_data = (T*) malloc(_size*sizeof(T));
 			if(_data==NULL){
+				printf(" bad alloc on _makeObjsValue\n");
 				throw std::bad_alloc();
 			}
 			T* temp_data = _data;
@@ -201,12 +205,18 @@ class KSArray{
 				temp_data++;
 			}
 		}
+		//allocates size for array
+		//data is zero initilized
+		//Pre: none that I know of
 		void _alloc(size_type length){
 			if(_data==NULL){
 				_size=length;
 				_data = (T*)calloc(_size,sizeof(T));
-			}else{
-				throw std::bad_alloc();
+				if(_data==NULL){
+
+					printf("bad alloc on _alloc\n");
+					throw std::bad_alloc();
+				}
 			}
 		}
 		void _freeData(){
