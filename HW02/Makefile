@@ -13,4 +13,7 @@ run:
 	./out
 grind:
 	$(MAKE) main
-	valgrind ./out
+	valgrind --leak-check=full ./out
+gdb:
+	$(MAKE) main
+	gdb ./out

@@ -29,6 +29,7 @@ using std::runtime_error;
 #include <algorithm>
 using std::fill;
 #include <cassert>
+#include <stdio.h>
 // For assert
 
 
@@ -713,6 +714,9 @@ TEST_CASE( "Size & ctor from size+value",
     {
         const KSArray<int> cmi(1, 42);
         const vector<int> data(1, 42);
+		for(int i=0;i<cmi.size();i++){
+			printf("%i %i\n",cmi[i],data[i]);
+		}
         REQUIRE( cmi.size() == size_t(1) );
         REQUIRE( cmi.end()-cmi.begin() == ptrdiff_t(1) );
         REQUIRE( equal(cmi.begin(), cmi.end(), data.begin()) );

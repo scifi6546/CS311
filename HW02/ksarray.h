@@ -9,6 +9,9 @@ template<typename T>
 class KSArray{
 	public:
 
+		typedef T value_type;
+		typedef std::uint_fast64_t size_type;
+
 	KSArray():_size{8}{
 		_makeObjs(_size);
 		
@@ -23,15 +26,17 @@ class KSArray{
 	}
 
 	KSArray(const KSArray &in){
-		operator=(in);
-
+		this->operator=(in);
 	}
 	~KSArray(){
 		_freeData();
 	}
 	
-	KSArray(KSArray && in){
-		_data = in.begin();
+	KSArray(KSArray && in)noexcept{
+		_data = in._data;
+		_size = in._size;
+		in._ownsData=false;
+		_ownsData=true;
 	}
 	KSArray& operator=(const KSArray &in){
 
@@ -40,13 +45,13 @@ class KSArray{
 		_alloc(in.size());
 		//getting a pointer to the zeroth element
 		T* temp_ptr = _data;
-		for(int i=0;i<in.size();i++){
-			temp_ptr = new T(in[i]);
+		for(size_type i=0;i<in.size();i++){
+			temp_ptr = new T(T(in[i]));
 			temp_ptr++;
 		}
 		return *this;
 	}
-	KSArray& operator=(KSArray &&in){
+	KSArray& operator=(KSArray &&in)noexcept{
 
 		_data = in._data;
 		_size = in._size;
@@ -58,7 +63,7 @@ class KSArray{
 	//int is not the best choice for an index
 	//because for small types an int may not be 
 	//large enough to address all of avalible memory
-	T operator[](const int& index_in)const{
+	const KSArray::value_type& operator[](const int& index_in)const{
 		size_type index = (size_type) index_in;
 		if(index<_size&&index>=0){
 			return _data[index];
@@ -67,7 +72,7 @@ class KSArray{
 			throw std::out_of_range("Out of range");
 		}
 	}
-	T& operator[](const int& index_in){
+	T& operator[](const int &index_in){
 	
 		size_type index = (size_type) index_in;
 		if(index<_size && index>=0){
@@ -77,14 +82,22 @@ class KSArray{
 		}
 	
 	}
-	T* begin()const{
+	const T* begin()const{
 		return _data;
 		//return const_cast<const T*>(_data);	
 	};
-	T* end()const{
-		return _data+_size;
+	T* begin(){
+
+		return _data;
+	}
+	T* end(){
+		return _data+(_size);
 		//return const_cast<const T*>(_data);	
 	};
+	const T* end() const{
+
+		return const_cast<T*>(_data+(_size));
+	}
 	size_t size()const{
 		return _size;	
 	};
@@ -95,7 +108,7 @@ class KSArray{
 			//iterates through both loops 
 			//if any value is not the same
 			//immediatly returns false
-			for(int i=0;i<size();i++){
+			for(size_type i=0;i<size();i++){
 				T foo = rhs[i];
 				T bar = _data[i];
 				if(foo!=bar){
@@ -116,7 +129,7 @@ class KSArray{
 			//iterates through both loops 
 			//if any value is not the same
 			//immediatly returns false
-			for(int i=0;i<size();i++){
+			for(size_type i=0;i<size();i++){
 				if(!(operator[](i)<rhs[i])){
 					return false;
 				}
@@ -129,7 +142,7 @@ class KSArray{
 		if(rhs.size()!=size()){
 			return false;
 		}else{
-			for(int i=0;i<size();i++){
+			for(size_type i=0;i<size();i++){
 				if(operator[](i)<rhs[i]){
 					return false;
 				}
@@ -142,7 +155,7 @@ class KSArray{
 		if(rhs.size()!=size()){
 			return false;
 		}else{
-			for(int i=0;i<size();i++){
+			for(size_type i=0;i<size();i++){
 				if(operator[](i)<rhs[i]){
 					return false;
 				}
@@ -155,7 +168,7 @@ class KSArray{
 		if(rhs.size()!=size()){
 			return false;
 		}else{
-			for(int i=0;i<size();i++){
+			for(size_type i=0;i<size();i++){
 				if(!(operator[](i)<rhs[i])){
 					return false;
 				}
@@ -163,47 +176,39 @@ class KSArray{
 			return true;
 		}
 	};
-	typedef T value_type;
-	typedef std::uint_fast64_t size_type;
 	private:
 		//pointer to data
 		T* _data=NULL;
 		//checks if the object owns the data (eg a move ctor was not
 		//used on the object)
-		bool _ownsData=true;
+		bool _ownsData=false;
 		//length of array
 		size_type _size=0;
 
 		//this constructs objects with default value
 		//assumes allocated size is able to be allocated
-		void _makeObjs(size_type size){
+		void _makeObjs(size_type size)noexcept{
 			_size=size;
 			_data = (T*) malloc(_size*sizeof(T));
-			if(_data==NULL){
-				printf("bad alloc on _makeObjs\n");
-				throw std::bad_alloc();
-			}
 			T* temp_data = _data;
-			for(size_type i=0;i<size;i++){
+			for(size_type i=0;i<_size;i++){
 				temp_data=new T();
 				temp_data++;
 			}
+			_ownsData=true;
 		}
 		//this constructs objects with value of type
 		//assumes allocated size is able to be allocated
-		void _makeObjsValue(size_type size,T value){
+		void _makeObjsValue(size_type size,T value)noexcept{
 
 			_size=size;
 			_data = (T*) malloc(_size*sizeof(T));
-			if(_data==NULL){
-				printf(" bad alloc on _makeObjsValue\n");
-				throw std::bad_alloc();
-			}
 			T* temp_data = _data;
 			for(size_type i=0;i<size;i++){
-				temp_data=new T(value);
+				temp_data[0]=value;
 				temp_data++;
 			}
+			_ownsData=true;
 		}
 		//allocates size for array
 		//data is zero initilized
@@ -212,11 +217,7 @@ class KSArray{
 			if(_data==NULL){
 				_size=length;
 				_data = (T*)calloc(_size,sizeof(T));
-				if(_data==NULL){
-
-					printf("bad alloc on _alloc\n");
-					throw std::bad_alloc();
-				}
+				_ownsData=true;
 			}
 		}
 		void _freeData(){
