@@ -855,9 +855,11 @@ TEST_CASE( "Copy ctor",
         allgood = true;
         for (auto i = ST(0); i != thesize; ++i)
         {
+			printf("req: %i real: %i\n",15-int(i*i),mi2[i]);
             if (mi2[i] != 15-int(i*i))
             {
                 allgood = false;
+				
                 break;
             }
         }

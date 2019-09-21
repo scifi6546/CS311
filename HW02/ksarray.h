@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <stdexcept>
+#include <algorithm>
 template<typename T>
 class KSArray{
 	public:
@@ -35,27 +36,31 @@ class KSArray{
 	KSArray(KSArray && in)noexcept{
 		_data = in._data;
 		_size = in._size;
-		in._ownsData=false;
-		_ownsData=true;
+		in._data=nullptr;
 	}
 	KSArray& operator=(const KSArray &in){
 
+		printf("copy ctor called\n");
 		//ugly I know this iterates through each element in 
 		//the target array and copies the item over
 		_alloc(in.size());
 		//getting a pointer to the zeroth element
-		T* temp_ptr = _data;
+		const T* begin_ptr = in.begin();
 		for(size_type i=0;i<in.size();i++){
-			temp_ptr = new T(T(in[i]));
-			temp_ptr++;
+			T foo[1];
+			foo=new T(*begin_ptr);
+			_data[i]=*foo;
+			begin_ptr++;
 		}
+		std::copy(in.begin(),in.end(),_data);
 		return *this;
 	}
 	KSArray& operator=(KSArray &&in)noexcept{
 
+		printf("move called\n");
 		_data = in._data;
 		_size = in._size;
-		in._ownsData=false;
+		in._data=nullptr;
 		return *this;
 	}
 	//preconditions
@@ -178,10 +183,9 @@ class KSArray{
 	};
 	private:
 		//pointer to data
-		T* _data=NULL;
+		T* _data=nullptr;
 		//checks if the object owns the data (eg a move ctor was not
 		//used on the object)
-		bool _ownsData=false;
 		//length of array
 		size_type _size=0;
 
@@ -195,7 +199,6 @@ class KSArray{
 				temp_data=new T();
 				temp_data++;
 			}
-			_ownsData=true;
 		}
 		//this constructs objects with value of type
 		//assumes allocated size is able to be allocated
@@ -208,23 +211,20 @@ class KSArray{
 				temp_data[0]=value;
 				temp_data++;
 			}
-			_ownsData=true;
 		}
 		//allocates size for array
 		//data is zero initilized
 		//Pre: none that I know of
 		void _alloc(size_type length){
-			if(_data==NULL){
+			if(_data==nullptr){
 				_size=length;
 				_data = (T*)calloc(_size,sizeof(T));
-				_ownsData=true;
 			}
 		}
 		void _freeData(){
-			if(_data!=NULL && _ownsData){
+			if(_data!=nullptr){
 				free(_data);
-				_data=NULL;
-				_ownsData=false;
+				_data=nullptr;
 				return;
 			}
 			return;
