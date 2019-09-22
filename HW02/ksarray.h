@@ -44,14 +44,6 @@ class KSArray{
 		//ugly I know this iterates through each element in 
 		//the target array and copies the item over
 		_alloc(in.size());
-		//getting a pointer to the zeroth element
-		const T* begin_ptr = in.begin();
-		for(size_type i=0;i<in.size();i++){
-			T foo[1];
-			foo=new T(*begin_ptr);
-			_data[i]=*foo;
-			begin_ptr++;
-		}
 		std::copy(in.begin(),in.end(),_data);
 		return *this;
 	}
@@ -174,7 +166,7 @@ class KSArray{
 			return false;
 		}else{
 			for(size_type i=0;i<size();i++){
-				if(!(operator[](i)<rhs[i])){
+				if(rhs[i]<_data[i]){
 					return false;
 				}
 			}
@@ -216,15 +208,26 @@ class KSArray{
 		//data is zero initilized
 		//Pre: none that I know of
 		void _alloc(size_type length){
-			if(_data==nullptr){
+			//if(_data==nullptr){
 				_size=length;
 				_data = (T*)calloc(_size,sizeof(T));
-			}
+			//if data is not nullptr destroy all data;
+			//}else{
+				/*
+				for(size_type i=0;i<_size;i++){
+					//calling deconstructor on all objs for 
+					//saftey sake
+					delete &_data[i];
+				}*/
+				//free(_data);
+				//_alloc(length);
+			//}
 		}
 		void _freeData(){
 			if(_data!=nullptr){
 				free(_data);
 				_data=nullptr;
+				_size=0;
 				return;
 			}
 			return;
