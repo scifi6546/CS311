@@ -27,7 +27,7 @@ class KSArray{
 	}
 
 	KSArray(const KSArray &in){
-		this->operator=(in);
+		operator=(in);
 	}
 	~KSArray(){
 		_freeData();
@@ -44,7 +44,12 @@ class KSArray{
 		//ugly I know this iterates through each element in 
 		//the target array and copies the item over
 		_alloc(in.size());
-		std::copy(in.begin(),in.end(),_data);
+		T* foo = _data;
+		for(size_type i=0;i<_size;i++){
+			foo=new T(in[i]);
+			foo++;
+		}
+		std::copy(in.begin(),in.end(),begin());
 		return *this;
 	}
 	KSArray& operator=(KSArray &&in)noexcept{
@@ -119,69 +124,11 @@ class KSArray{
 		return !operator==(rhs);	
 	};
 	bool operator<(const KSArray &rhs)const{
-		size_type index=0;
-		if(_size==0&&rhs.size()==0){
-			return false;
-		}
-		/*
-		if(_size>rhs.size()){
-			return false;
-		}
-		if(_size<rhs.size()){
-			return true;
-		}*/
-		while(true){
-			if(index<_size&&index<rhs.size()){
-				if((_data[index]<rhs[index])==false){
-					printf("item not equal returning false!\n");
-					return false;
-				}else{
-					return true;
-				}
-				index++;
-			}else{
-				if(index>=_size && index>=rhs.size()){
-					printf("thes same??\n");
-					return true;
-				}
-				if(index>=_size){
-					printf("less then\n");
-					return true;
-				}
-				if(index>=rhs.size()){
-					printf("greater than\n");
-					return false;
-				}
-			}
-		}
+		return std::lexicographical_compare(begin(),end(),rhs.begin(),rhs.end());
 	};
 		
 	bool operator>(const KSArray &rhs)const{
-		size_type index=0;
-		if(_size==0&&rhs.size()==0 || _size<rhs.size()){
-			return false;
-		}
-		if(_size>rhs.size()){
-			return true;
-		}
-		while(true){
-			if(index<_size&&index<rhs.size()){
-				if(!(rhs[index]<_data[index])){
-					return false;
-				}
-				index++;
-			}else{
-				if(index>=_size && index>=rhs.size()){
-					return true;
-				}
-				if(index>=_size){
-					return false;
-				}
-				if(index>=rhs.size()){
-					return true;
-				}
-			}
-		}
+		return std::lexicographical_compare(rhs.begin(),rhs.end(),begin(),end());
 	};
 	bool operator>=(const KSArray &rhs)const{
 		size_type index=0;
@@ -190,6 +137,9 @@ class KSArray{
 			if(index<_size&&index<rhs.size()){
 				if(_data[index]<rhs[index]){
 					return false;
+				}
+				if(rhs[index]<_data[index]){
+					return true;
 				}
 				index++;
 			}else{
@@ -206,11 +156,16 @@ class KSArray{
 		}
 	};
 	bool operator<=(const KSArray &rhs)const{
+		
 		size_type index=0;
 		while(true){
 			if(index<_size&&index<rhs.size()){
 				if(rhs[index]<_data[index]){
+					printf("rhs[index]<_data[index] eval as true\n");
 					return false;
+				}
+				if(_data[index]<rhs[index]){
+					return true;
 				}
 				index++;
 			}else{
@@ -221,6 +176,7 @@ class KSArray{
 					return true;
 				}
 				if(index>=rhs.size()){
+					
 					return false;
 				}
 			}
@@ -278,6 +234,9 @@ class KSArray{
 		}
 		void _freeData(){
 			if(_data!=nullptr){
+				for(size_type i=0;i<_size;i++){
+					_data[i].~T();
+				}
 				free(_data);
 				_data=nullptr;
 				_size=0;
