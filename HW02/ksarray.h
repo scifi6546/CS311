@@ -20,70 +20,38 @@ class KSArray{
 	//preconditions:
 	//enough ram is free to allocate 8 value_types
 	//post: none
-	KSArray():_size{8}{
-		_makeObjs(_size);
-		
+	KSArray():_size(8),_data(new value_type[8]){
 	}
 	//preconditions:enough ram is free to allocate 8 value_types
 	//post: none
-	KSArray(int size_in):_size{static_cast<size_type>(size_in)}{
-		_makeObjs(_size);
+	KSArray(int size):_size(size),_data(new value_type[size]){
 	}
 	//pre: enough ram is free to allocate data
 	//post: none
-	KSArray(int size,T value){
-		_makeObjsValue(size,value);	
+	KSArray(int size,T value):_size(size),_data(new value_type[size]){
+		std::fill(begin(),end(),value);	
 	}
 	//pre: in is capable of being copied
 	//post: data in this is a deep copy of the data in in
-	KSArray(const KSArray &in){
-		if(&in==this){
-			printf("this\n");
-			_freeData();
-		}
-		printf("copy ctor called\n");
-		_size=in.size();
-		_alloc(in.size());
-		T* foo = _data;
-		for(size_type i=0;i<_size;i++){
-			_data[i]=in._data[i];
-		}
+	KSArray(const KSArray &in):_size(in._size),_data(new value_type[in.size()]){
+		std::copy(in.begin(),in.end(),begin());
 	}
 	~KSArray(){
-		_freeData();
+		delete [] _data;
+		_size=0;
 	}
 	
-	KSArray(KSArray && in)noexcept{
-		_data = in._data;
-		_size = in._size;
+	KSArray(KSArray && in)noexcept:_size(in._size),_data(in._data){
 		in._data=nullptr;
+		
 	}
 	KSArray& operator=(const KSArray &in){
-
-		if(&in==this){
-			printf("this\n");
-			_freeData();
-		}
-		printf("copy ctor called\n");
-		//ugly I know this iterates through each element in 
-		//the target array and copies the item over
-		_size=in.size();
-		_alloc(in.size());
-		T* foo = _data;
-		for(size_type i=0;i<_size;i++){
-			//printf("i: %i\n",i);
-			//T foo(in._data[i]);
-			_data[i]=in._data[i];
-		}
-		//std::copy(in.begin(),in.end(),begin());
+		KSArray temp(in);
+		_swap(temp);
 		return *this;
 	}
 	KSArray& operator=(KSArray &&in)noexcept{
-
-		printf("move called\n");
-		_data = in._data;
-		_size = in._size;
-		in._data=nullptr;
+		_swap(in);
 		return *this;
 	}
 	//preconditions
@@ -112,7 +80,6 @@ class KSArray{
 	}
 	const T* begin()const{
 		return _data;
-		//return const_cast<const T*>(_data);	
 	};
 	T* begin(){
 
@@ -120,15 +87,15 @@ class KSArray{
 	}
 	T* end(){
 		return _data+(_size);
-		//return const_cast<const T*>(_data);	
 	};
 	const T* end() const{
 
-		return const_cast<T*>(_data+(_size));
+		return _data+(_size);
 	}
 	size_t size()const{
 		return _size;	
 	};
+	//preconditions: operator== exists for rhs
 	bool operator==(const KSArray &rhs)const{
 		if(rhs.size() != _size){
 			return false;
@@ -137,9 +104,7 @@ class KSArray{
 			//if any value is not the same
 			//immediatly returns false
 			for(size_type i=0;i<size();i++){
-				T foo = rhs[i];
-				T bar = _data[i];
-				if(foo!=bar){
+				if(!(rhs[i]==_data[i])){
 					return false;
 				}
 			}
@@ -187,7 +152,6 @@ class KSArray{
 		while(true){
 			if(index<_size&&index<rhs.size()){
 				if(rhs[index]<_data[index]){
-					printf("rhs[index]<_data[index] eval as true\n");
 					return false;
 				}
 				if(_data[index]<rhs[index]){
@@ -209,68 +173,13 @@ class KSArray{
 		}
 	};
 	private:
-		//pointer to data
-		T* _data=nullptr;
-		//checks if the object owns the data (eg a move ctor was not
-		//used on the object)
-		//length of array
-		size_type _size=0;
+		void _swap(KSArray &in)noexcept{
+			std::swap(_data,in._data);
+			std::swap(_size,in._size);
+		}
+		size_type _size;
+		T* _data;
 
-		//this constructs objects with default value
-		//assumes allocated size is able to be allocated
-		void _makeObjs(size_type size)noexcept{
-			_size=size;
-			_data = (T*) malloc(_size*sizeof(T));
-			T* temp_data = _data;
-			for(size_type i=0;i<_size;i++){
-				temp_data=new T();
-				temp_data++;
-			}
-		}
-		//this constructs objects with value of type
-		//assumes allocated size is able to be allocated
-		void _makeObjsValue(size_type size,T value)noexcept{
-
-			_size=size;
-			_data = (T*) malloc(_size*sizeof(T));
-			T* temp_data = _data;
-			for(size_type i=0;i<size;i++){
-				temp_data[0]=value;
-				temp_data++;
-			}
-		}
-		//allocates size for array
-		//data is zero initilized
-		//Pre: none that I know of
-		void _alloc(size_type length){
-			//if(_data==nullptr){
-				_size=length;
-				_data = (T*)calloc(_size,sizeof(T));
-			//if data is not nullptr destroy all data;
-			//}else{
-				/*
-				for(size_type i=0;i<_size;i++){
-					//calling deconstructor on all objs for 
-					//saftey sake
-					delete &_data[i];
-				}*/
-				//free(_data);
-				//_alloc(length);
-			//}
-		}
-		void _freeData(){
-			if(_data!=nullptr){
-				for(size_type i=0;i<_size;i++){
-					_data[i].~T();
-				}
-				free(_data);
-				_data=nullptr;
-				_size=0;
-				return;
-			}
-			return;
-
-		}
 
 };
 #endif
