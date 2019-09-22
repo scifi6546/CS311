@@ -7,27 +7,47 @@
 #include <stdexcept>
 #include <algorithm>
 template<typename T>
+//Preconditions:
+//Valuetype has a ctor,and operator<
+//Enough ram is avaliable to allocate data
+//Post:
 class KSArray{
 	public:
 
 		typedef T value_type;
 		typedef std::uint_fast64_t size_type;
 
+	//preconditions:
+	//enough ram is free to allocate 8 value_types
+	//post: none
 	KSArray():_size{8}{
 		_makeObjs(_size);
 		
 	}
-	//assumes that size_in can be sucessfully allocated
+	//preconditions:enough ram is free to allocate 8 value_types
+	//post: none
 	KSArray(int size_in):_size{static_cast<size_type>(size_in)}{
 		_makeObjs(_size);
 	}
-
+	//pre: enough ram is free to allocate data
+	//post: none
 	KSArray(int size,T value){
 		_makeObjsValue(size,value);	
 	}
-
+	//pre: in is capable of being copied
+	//post: data in this is a deep copy of the data in in
 	KSArray(const KSArray &in){
-		operator=(in);
+		if(&in==this){
+			printf("this\n");
+			_freeData();
+		}
+		printf("copy ctor called\n");
+		_size=in.size();
+		_alloc(in.size());
+		T* foo = _data;
+		for(size_type i=0;i<_size;i++){
+			_data[i]=in._data[i];
+		}
 	}
 	~KSArray(){
 		_freeData();
@@ -40,16 +60,22 @@ class KSArray{
 	}
 	KSArray& operator=(const KSArray &in){
 
+		if(&in==this){
+			printf("this\n");
+			_freeData();
+		}
 		printf("copy ctor called\n");
 		//ugly I know this iterates through each element in 
 		//the target array and copies the item over
+		_size=in.size();
 		_alloc(in.size());
 		T* foo = _data;
 		for(size_type i=0;i<_size;i++){
-			foo=new T(in[i]);
-			foo++;
+			//printf("i: %i\n",i);
+			//T foo(in._data[i]);
+			_data[i]=in._data[i];
 		}
-		std::copy(in.begin(),in.end(),begin());
+		//std::copy(in.begin(),in.end(),begin());
 		return *this;
 	}
 	KSArray& operator=(KSArray &&in)noexcept{
