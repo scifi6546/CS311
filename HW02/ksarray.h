@@ -99,7 +99,7 @@ class KSArray{
 		return _size;	
 	};
 	bool operator==(const KSArray &rhs)const{
-		if(rhs.size()!=size()){
+		if(rhs.size() != _size){
 			return false;
 		}else{
 			//iterates through both loops 
@@ -119,58 +119,111 @@ class KSArray{
 		return !operator==(rhs);	
 	};
 	bool operator<(const KSArray &rhs)const{
-	
-		if(rhs.size()!=size()){
+		size_type index=0;
+		if(_size==0&&rhs.size()==0){
 			return false;
-		}else{
-			//iterates through both loops 
-			//if any value is not the same
-			//immediatly returns false
-			for(size_type i=0;i<size();i++){
-				if(!(operator[](i)<rhs[i])){
+		}
+		/*
+		if(_size>rhs.size()){
+			return false;
+		}
+		if(_size<rhs.size()){
+			return true;
+		}*/
+		while(true){
+			if(index<_size&&index<rhs.size()){
+				if((_data[index]<rhs[index])==false){
+					printf("item not equal returning false!\n");
+					return false;
+				}else{
+					return true;
+				}
+				index++;
+			}else{
+				if(index>=_size && index>=rhs.size()){
+					printf("thes same??\n");
+					return true;
+				}
+				if(index>=_size){
+					printf("less then\n");
+					return true;
+				}
+				if(index>=rhs.size()){
+					printf("greater than\n");
 					return false;
 				}
 			}
-			return true;
 		}
 	};
 		
 	bool operator>(const KSArray &rhs)const{
-		if(rhs.size()!=size()){
+		size_type index=0;
+		if(_size==0&&rhs.size()==0 || _size<rhs.size()){
 			return false;
-		}else{
-			for(size_type i=0;i<size();i++){
-				if(operator[](i)<rhs[i]){
+		}
+		if(_size>rhs.size()){
+			return true;
+		}
+		while(true){
+			if(index<_size&&index<rhs.size()){
+				if(!(rhs[index]<_data[index])){
 					return false;
 				}
+				index++;
+			}else{
+				if(index>=_size && index>=rhs.size()){
+					return true;
+				}
+				if(index>=_size){
+					return false;
+				}
+				if(index>=rhs.size()){
+					return true;
+				}
 			}
-			return true;
 		}
 	};
 	bool operator>=(const KSArray &rhs)const{
-	
-		if(rhs.size()!=size()){
-			return false;
-		}else{
-			for(size_type i=0;i<size();i++){
-				if(operator[](i)<rhs[i]){
+		size_type index=0;
+
+		while(true){
+			if(index<_size&&index<rhs.size()){
+				if(_data[index]<rhs[index]){
 					return false;
 				}
+				index++;
+			}else{
+				if(index>=_size && index>=rhs.size()){
+					return true;
+				}
+				if(index>=_size){
+					return false;
+				}
+				if(index>=rhs.size()){
+					return true;
+				}
 			}
-			return true;
 		}
 	};
 	bool operator<=(const KSArray &rhs)const{
-	
-		if(rhs.size()!=size()){
-			return false;
-		}else{
-			for(size_type i=0;i<size();i++){
-				if(rhs[i]<_data[i]){
+		size_type index=0;
+		while(true){
+			if(index<_size&&index<rhs.size()){
+				if(rhs[index]<_data[index]){
+					return false;
+				}
+				index++;
+			}else{
+				if(index>=_size && index>=rhs.size()){
+					return true;
+				}
+				if(index>=_size){
+					return true;
+				}
+				if(index>=rhs.size()){
 					return false;
 				}
 			}
-			return true;
 		}
 	};
 	private:

@@ -1374,6 +1374,17 @@ TEST_CASE( "Comparisons",
         {
             for (auto j = VST(0); j != NUM_ARRAYS; ++j)
             {
+				printf("i: %i j: %i\n",i,j);
+				for(int k=0;k<vv[i].size();k++){
+					
+					printf("value: %i\n",vv[i][k]);
+				}
+				printf("vv[%i]:\n vv(i) size: %i\n",i,vv[i].size());
+				printf("vv(j) size: %i\n",vv[j].size());
+				for(int k=0;k<vv[j].size();k++){
+					
+					printf("value: %i\n",vv[j][k]);
+				}
                 REQUIRE( (vv[i] <  vv[j]) == (i <  j) );
                 REQUIRE( (vv[i] <= vv[j]) == (i <= j) );
                 REQUIRE( (vv[i] >  vv[j]) == (i >  j) );
