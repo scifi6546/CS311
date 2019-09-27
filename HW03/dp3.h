@@ -71,19 +71,17 @@ ValueType lookup(const LLNode<ValueType> * head,
                  std::size_t index)
 {
 	if(head==nullptr){
-		throw std::out_of_range("out of range for linked list");
+		throw std::out_of_range("out of range");
 	}
-	LLNode<ValueType> *item=head->_next;
+	const LLNode<ValueType> *current=head;
 	for(int i=0;i<index;i++){
-		if(item->_next==nullptr){
-			throw std::out_of_range("out of range for linked list");
+		if(current->_next!=nullptr){
+			current=head;
 		}else{
-			item=item->_next;
+			throw std::out_of_range("out of range");
 		}
-
 	}
-    return item->_data;  // Dummy return
-    // TODO: Write this!!!
+	return (current->_data);
 }
 
 

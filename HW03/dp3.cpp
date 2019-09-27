@@ -14,7 +14,14 @@ using std::function;
 void didItThrow(const function<void()> & ff,
                 bool & threw)
 {
-    // TODO: Write this!!!
+	threw = false;
+	try{
+		ff();
+	}
+	catch(std::exception &e){
+		threw= true;
+		throw e;
+	}
 }
 
 
