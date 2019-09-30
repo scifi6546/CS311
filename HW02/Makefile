@@ -1,4 +1,4 @@
-CFLAGS = -Wall -std=c++17 -ggdb
+CFLAGS = -Wall -std=c++17 -ggdb -o0 -Wreorder
 CC=g++
 main:
 	$(MAKE) catch
