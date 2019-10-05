@@ -74,9 +74,9 @@ ValueType lookup(const LLNode<ValueType> * head,
 		throw std::out_of_range("out of range");
 	}
 	const LLNode<ValueType> *current=head;
-	for(int i=0;i<index;i++){
+	for(std::size_t i=0;i<index;i++){
 		if(current->_next!=nullptr){
-			current=head;
+			current=current->_next;
 		}else{
 			throw std::out_of_range("out of range");
 		}
@@ -89,13 +89,25 @@ ValueType lookup(const LLNode<ValueType> * head,
 void didItThrow(const std::function<void()> & ff,
                 bool & threw);
 
-
+//pre FDIter is a ptr and the item that fditer is pointing to has < operator
 template <typename FDIter>
 bool checkSorted(FDIter first,
                  FDIter last)
-{
-    return false;  // Dummy return
-    // TODO: Write this!!!
+{ 
+	if(first==last){
+		return true;
+	}
+	FDIter next = first;
+	next++;	
+	while(next!=last){
+		if((*next)<(*first)){
+			return false;
+		}
+		first++;
+		next++;
+	}
+	
+	return true;
 }
 
 

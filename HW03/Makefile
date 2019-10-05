@@ -7,9 +7,9 @@ main:
 	$(CC) -std=c++17 test.o main.o dp3.o -o out
 catch: dp3_test_suites.cpp
 	$(CC) -c $(CFLAGS) dp3_test_suites.cpp -o test.o
-main_cpp: dp3_test_main.cpp
+main_cpp: dp3_test_main.cpp dp3.h
 	$(CC) -c $(CFLAGS) dp3_test_main.cpp -o main.o
-dp3: dp3.cpp
+dp3: dp3.cpp dp3.h
 	$(CC) -c $(CFLAGS) dp3.cpp -o dp3.o
 run:
 	$(MAKE) main
