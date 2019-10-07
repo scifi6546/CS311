@@ -69,4 +69,5 @@ int countHAR(int dim_x,int dim_y,
 	std::vector<Vec2> been={};
 	return countRec(been,{dim_x,dim_y},{hole_x,hole_y},
 			{start_x,start_y},{finish_x,finish_y});
+	//todo check if every tile is visited.
 }
