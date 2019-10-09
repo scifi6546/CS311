@@ -13,9 +13,14 @@
 ## Give an example of a rule that you might correctly break, according to the standards in “On Following Rules”, and explain circumstances in which you would break it.
     Goto may be used when performace is extremly important or low level coding. For example I am writing a game on a old console. I may have to use GOTO
 ## What is an expression?
-    True or false? When a type conversion is applied to a variable, it may alter the value of the variable.
-    What is an Lvalue? What is an Rvalue?
-    Classify expressions in some C++ code as Lvalue or Rvalue.
+    Something that has a value
+## True or false? When a type conversion is applied to a variable, it may alter the value of the variable.
+   false because data is only translated to things that have more detail, int to float, not float to int. (Actually that may be considered loosing info)
+## What is an Lvalue? What is an Rvalue?
+    rvalue: something that lives in an expression only
+    lvalue: something that outlives an expression.
+
+##    Classify expressions in some C++ code as Lvalue or Rvalue.
     Example. Consider the following C++ code.
 
               vector<int> data(10);
@@ -24,22 +29,40 @@
               data[m] = 37+data[0];
 
     Classify each of the following as Lvalue or Rvalue.
-        data
-        data[0]
-        m
-        data[m]
-        37
-        37+data[0]
-    Which C++ expressions are simultaneously both Lvalues and Rvalues? Which C++ expressions are neither Lvalues nor Rvalues?
-    Name and briefly explain each of the four C++ parameter-passing methods we discussed.
-    Under normal circumstances, which parameter-passing method is used to pass an int?
-    Under normal circumstances, which parameter-passing method is used to pass a vector<int>?
-    Under normal circumstances, which parameter-passing method is used to pass an iterator?
-    What is a special circumstance in which we would use pass by value to pass something of a type that we would not normally pass by value?
-    When do we return by reference / reference-to-const?
-    What does overloading mean?
-    What do we mean by the arity of an operator?
-    In C++, we can implement an overloaded operator using either a global function or a member function. How does this choice affect the parameters the function takes?
+        data: lvalue
+        data[0]: lvalue
+        m: lvalue
+        data[m]: lvalue
+        37: rvalue
+        37+data[0]: rvalue
+
+## Which C++ expressions are simultaneously both Lvalues and Rvalues? Which C++ expressions are neither Lvalues nor Rvalues?
+   NONE! either lvalue or rvalue not both
+## Name and briefly explain each of the four C++ parameter-passing methods we discussed.
+by value:
+```void foo(bar bars);```
+by refrence:
+```void foo(bar& bars);```
+by refrence to const:
+```void foo(const bar& bars);```
+by rvalue refrence:
+```void foo(bar&& bars);```
+
+## Under normal circumstances, which parameter-passing method is used to pass an int?
+```void foo(int bar);```
+## Under normal circumstances, which parameter-passing method is used to pass a vector<int>?
+```void foo(const std::vector<int>& bar);```
+## Under normal circumstances, which parameter-passing method is used to pass an iterator?
+    ??
+## What is a special circumstance in which we would use pass by value to pass something of a type that we would not normally pass by value?
+   when I want a copy that I can change
+## When do we return by reference / reference-to-const?
+   WHen there is a large variable that takes a long time to copy
+## What does overloading mean?
+   1 name can call 2 different methods
+## What do we mean by the arity of an operator?
+   Number of arguments that an operator takes
+## In C++, we can implement an overloaded operator using either a global function or a member function. How does this choice affect the parameters the function takes?
     We generally want to implement an operator using a member function, when we have no good reason not it. Give two good reasons not to, which may apply to some operators.
     List the Big Five.
     Give an example of a member function that a C++ compiler may automatically write for you.
