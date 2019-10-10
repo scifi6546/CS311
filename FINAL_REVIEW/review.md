@@ -380,27 +380,37 @@ A class invariant is a postcondition of every public member function, except dct
     Is Merge Sort stable?
     Application of the Master Theorem: given a description of a recursive algorithm, find its order. A statement of the Master Theorem will be given.
     Example.
-        A recursive algorithm splits its input into two nearly equal-sized parts. It makes a recursive call on each part, and it does other operations amounting to . Using the Master Theorem, find the order of the algorithm. Show your work.
-    We can put a limit on the performance of a general-purpose comparison sort. What limit is that?
-    Your friend Egbert says, “I have a new general-purpose comparison sort that runs in linear time for all inputs.” Comment on Egbert’s claim.
+       A recursive algorithm splits its input into two nearly equal-sized parts. It makes a recursive call on each part, and it does other operations amounting to . Using the Master Theorem, find the order of the algorithm. Show your work.
+## We can put a limit on the performance of a general-purpose comparison sort. What limit is that?
+  nlogn
+## Your friend Egbert says, “I have a new general-purpose comparison sort that runs in linear time for all inputs.” Comment on Egbert’s claim.
+   He must know more about input data then reasonable for general purpose
     Explain how Quicksort works.
     Is Quicksort stable?
     Quicksort’s Partition operation splits items into the small ones and the large ones. How does the algorithm determine which are small, and which are large?
     We cannot use the Master Theorem to analyze Quicksort. Why not?
-    What is the order of Quicksort?
-    Describe one of the commonly used optimizations for Quicksort. What behavior does the algorithm have without the optimization, and how does the optimization change this?
-    What is the average-case order of Quicksort?
-    In an algorithmic context, what do we mean by introspection?
-    What is the order of Introsort?
-    Is Introsort stable?
+## What is the order of Quicksort?
+	best: nlogn
+	worst: n^2
+## Describe one of the commonly used optimizations for Quicksort. What behavior does the algorithm have without the optimization, and how does the optimization change this?
+    Different partition scheme. This causes the algo to skip over the data less.
+##  What is the average-case order of Quicksort?
+    nlog(n)
+## In an algorithmic context, what do we mean by introspection?
+algo keeps track of its performance 
+##What is the order of Introsort?
+    best: nlogn
+	worst: nlogn
+## Is Introsort stable?
+	yes
 
 
 Note. We have not yet covered the material for the following topics.
 
-    Explain how Pigenhole Sort works.
+## Explain how Pigenhole Sort works.
     - First finds high and low items
     - then puts items in buckets and then puts buckets inti list
-    What requirements does Pigeonhole Sort place on the data that it sorts?
+## What requirements does Pigeonhole Sort place on the data that it sorts?
     - can index data
     What is the order of Pigeonhole Sort?
     - o(n)
