@@ -63,26 +63,49 @@ by rvalue refrence:
 ## What do we mean by the arity of an operator?
    Number of arguments that an operator takes
 ## In C++, we can implement an overloaded operator using either a global function or a member function. How does this choice affect the parameters the function takes?
-    We generally want to implement an operator using a member function, when we have no good reason not it. Give two good reasons not to, which may apply to some operators.
-    List the Big Five.
-    Give an example of a member function that a C++ compiler may automatically write for you.
-    What is a default constructor?
-    What is an assignment operator?
-    When we talk about a copy constructor or a copy assignment operator, what do we mean by “copy”?
-    When we talk about a move constructor or a move assignment operator, what do we mean by “move”?
-    Explain the differences between a copy constructor and a move constructor: how they take their parameters, and what they (probably) do.
-    In what circumstances does C++ automatically write a class’s default constructor?
-    Your instructor refers to certain functions as “invisible”. What does he mean?
-    Suppose we want a C++ class to have no copy operations. How can we eliminate these operations?
-    State the Rule of Five.
-    What is an invariant?
-    Explain preconditions and postconditions. What do we use these for?
-    What is an operation contract? How is it like a real-world contract?
-    What is a class invariant?
-    Finish the following.
-        A class invariant is a precondition of every public member function, except …
-        A class invariant is a postcondition of every public member function, except …
-    Given a description of a function, write reasonable pre- and postconditions for the function.
+    member function does not allow type conversion
+    Global allows type conversion
+## We generally want to implement an operator using a member function, when we have no good reason not it. Give two good reasons not to, which may apply to some operators.
+    1. We can not modify the object
+    2. We need type conversion
+
+## List the Big Five.
+If you have to write the Deconstructor copy ctor move ctor =copy =move write all 5
+## Give an example of a member function that a C++ compiler may automatically write for you.
+operator=
+## What is a default constructor?
+constructor with no arguments
+## What is an assignment operator?
+operator=
+## When we talk about a copy constructor or a copy assignment operator, what do we mean by “copy”?
+data in class is copied
+## When we talk about a move constructor or a move assignment operator, what do we mean by “move”?
+data is never moved, owenrship is transferred
+
+## Explain the differences between a copy constructor and a move constructor: how they take their parameters, and what they (probably) do.
+	move: foo(foo&& bar);
+	copy foo(foo& bar);
+
+## In what circumstances does C++ automatically write a class’s default constructor?
+    When everything has a ctor already
+## Your instructor refers to certain functions as “invisible”. What does he mean?
+    The fctn is never explicitly called
+## Suppose we want a C++ class to have no copy operations. How can we eliminate these operations?
+    foo(foo& bar)=delete;
+## State the Rule of Five.
+If you have to write the Deconstructor copy ctor move ctor =copy =move write all 5
+## What is an invariant
+SOmething that is assumed to always be true
+## Explain preconditions and postconditions. What do we use these for?
+## What is an operation contract? How is it like a real-world contract?
+If {precondition} then {post condition
+
+## What is a class invariant?
+something is true in a class
+## Finish the following.
+A class invariant is a precondition of every public member function, except ctors
+A class invariant is a postcondition of every public member function, except dctors
+## Given a description of a function, write reasonable pre- and postconditions for the function.
     Given a description of a class, write reasonable class invariants.
     Your instructor says that talking about “the constructor” (as opposed to “a constructor”) usually indicates that there is a misunderstanding. What is this misunderstanding?
     Your instructor says that the first goal, when writing code, should be to get it to compile. Why is this? What important advantage do we lose when we work on code for an extended time without being able to compile it?
@@ -371,17 +394,25 @@ by rvalue refrence:
     What is the order of Introsort?
     Is Introsort stable?
 
+
 Note. We have not yet covered the material for the following topics.
 
     Explain how Pigenhole Sort works.
+    - First finds high and low items
+    - then puts items in buckets and then puts buckets inti list
     What requirements does Pigeonhole Sort place on the data that it sorts?
+    - can index data
     What is the order of Pigeonhole Sort?
+    - o(n)
     Explain how Radix Sort works.
+    - puts items ib backets based on first ubdex
     What requirements does Radix Sort place on the data that it sorts?
     What is the order of Radix Sort?
     Both Pigeonhole Sort and Radix Sort would seem to be faster than it is possible for a sort to be.
         How is this possible?
+	- knows info about data
         Why is it not such a big deal?
+	- not a big deal because the sors are hard to use
     In the context of C++ lambda functions, what do we mean by capture? When is capturing necessary?
     Is std::sort stable?
     Why do the STL Linked List templates—std::list & std::forward_list—have their own sorting member functions, while other STL containers, like std::vector, do not?
