@@ -1,5 +1,5 @@
-CFLAGS = -Wall -std=c++17 -ggdb -o0 -Wreorder
-CC=g++
+CFLAGS = -Wall -ansi -pedantic -Wextra -Wconversion -std=c++17 -ggdb -o0 -Wreorder
+CC=clang++
 main:
 	$(MAKE) catch
 	$(MAKE) main_cpp
@@ -7,7 +7,7 @@ main:
 catch: tssarray_test_suites.cpp
 	$(CC) -c $(CFLAGS) tssarray_test_suites.cpp -o test.o
 main_cpp: tssarray_test_main.cpp
-	$(CC) -c $(CFLAGS) tssaray_test_main.cpp -o main.o
+	$(CC) -c $(CFLAGS) tssarray_test_main.cpp -o main.o
 run:
 	$(MAKE) main
 	./out
