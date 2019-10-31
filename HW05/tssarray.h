@@ -29,22 +29,7 @@ class TSSArray{
 		//post: none
 		//Exception Neutral
 		TSSArray(const TSSArray &in){
-			if(this==&in){
-				return;
-			}
-			_size=in.size();
-			_alloc_size=_size;
-			value_type *temp = new value_type[in.size()];
-			try{
-				std::copy(in.begin(),in.end(),temp);
-			}catch(...){
-				delete[] temp;
-				_size=0;
-				_alloc_size=0;
-				throw;
-			}
-			std::swap(_data,temp);
-			delete[] temp;
+			operator=(in);
 		}
 
 		//strong guarentee
