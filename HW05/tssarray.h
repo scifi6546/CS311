@@ -6,7 +6,11 @@
 //Nicholas Alexeev
 //purpose:implement tssarray
 //25-08-2019
+//tssarray.h
 //licensed under the GPL v3
+
+//class invariants
+//_data is owned by this and allocated&&free'd by new and delete only
 template <typename T>
 class TSSArray{
 	public:
@@ -17,114 +21,77 @@ class TSSArray{
 		//basic garuntee
 		//pre: value_type can be constructed 32 times
 		//post: none
+		//Exception Neutral
 		explicit TSSArray(size_type s_in=0):_size(s_in),
 			_alloc_size(std::max(_size,size_type(_DEFAULT_SIZE))),_data(new value_type[_alloc_size]){};
 		//strong guarentee
 		//pre: in is a valid TSSArray
 		//post: none
-		TSSArray(TSSArray &in){
-			_size=in.size();
-			_alloc_size=_size;
-			_data = new value_type[in.size()];
-			try{
-				std::copy(in.begin(),in.end(),_data);
-			}catch(...){
-				delete [] _data;
-				throw;
-			}
-		}
-		//strong guarentee
-		//pre: in is a valid TSSArray
-		//post: none
+		//Exception Neutral
 		TSSArray(const TSSArray &in){
 			if(this==&in){
 				return;
 			}
 			_size=in.size();
 			_alloc_size=_size;
-			_data = new value_type[in.size()];
+			value_type *temp = new value_type[in.size()];
 			try{
-				std::copy(in.begin(),in.end(),_data);
+				std::copy(in.begin(),in.end(),temp);
 			}catch(...){
-				delete [] _data;
+				delete[] temp;
+				_size=0;
+				_alloc_size=0;
 				throw;
 			}
+			std::swap(_data,temp);
+			delete[] temp;
 		}
 
 		//strong guarentee
 		//pre: in is a valid TSSArray
 		//post: none
+		//Exception Neutral
 		TSSArray(TSSArray &&in)noexcept{
 			swap(in);
+			in._size=0;
+			in._alloc_size=0;
 		};
 
 		//strong guarentee
 		//pre: in is a valid tssarray
 		//post: none
-		TSSArray& operator=(TSSArray &in){
-			if(this==&in){
-				return *this;
-			}
-			_data= new value_type[in.size()];
-			try{
-				std::copy(in.begin(),in.end(),begin());
-			}catch(...){
-				delete [] _data;
-				throw;
-			}
-			_alloc_size=in.size();
-			_size=_alloc_size;
-			return *this;
-		}
-		//strong guarentee
-		//pre: in is a valid tssarray
-		//post: none
+		//Exception Neutral
 		TSSArray& operator=(const TSSArray &in){
-			_data= new value_type[in.size()];
+			value_type *temp = new value_type[in.size()];
 			
 			try{
-				std::copy(in.begin(),in.end(),begin());
+				std::copy(in.begin(),in.end(),temp);
 			}catch(...){
-				delete [] _data;
+				delete[] temp;
+				_size=0;
+				_alloc_size=0;
 				throw;
 			}
 			_alloc_size=in.size();
 			_size=_alloc_size;
+			std::swap(_data,temp);
+			delete[] temp;
 			return *this;
 		}
 		//nothrow guarentee
 		//pre: in is a valid tssarray
 		//post: none
+		//Exception Neutral
 		TSSArray& operator=(TSSArray &&in)noexcept{
 			swap(in);
-			return *this;
-			/*
-			if(this==&in)
-				return *this;
-			_data=in._data;
-			_alloc_size=in._alloc_size;
-			_size=in._size;
 			in._size=0;
 			in._alloc_size=0;
-			in._data=nullptr;
-			return *this;*/
+			return *this;
 		}
-		//nothrow guarentee
-		//pre: in is a valid tssarray
-		//post: none
-		/*
-		TSSArray& operator=(const TSSArray &&in)noexcept{
-			_data=in._data;
-			_alloc_size=in._alloc_size;
-			_size=in._size;
-			in._size=0;
-			in._alloc_size=0;
-			in._data=nullptr;
-			return *this;
-		}*/
 		//strong garuentee
 		//pre: i<size()
 		//post: none
+		//Exception Neutral
 		value_type& operator[](size_type i){
 			if(i<size()){
 				return _data[i];
@@ -134,6 +101,7 @@ class TSSArray{
 		//strong garuentee
 		//pre: i<size()
 		//post: none
+		//Exception Neutral
 		const value_type& operator[](size_type i)const{
 			if(i<size()){
 				return _data[i];
@@ -143,130 +111,134 @@ class TSSArray{
 		//no throw garuentee
 		//pre: valid array
 		//post: none
+		//Exception Neutral
 		const size_type size()const noexcept{
 			return _size;
 		}
 		//no throw garuentee
 		//pre: valid array
 		//post: none
+		//Exception Neutral
 		bool empty()const noexcept{
 			return _size==0;
 		}
 
 
-		//weak gaurentee
+		//basic gaurentee
 		//pre: size is able to be allocated
+		//post: data is allocated with a size >=size_in
+		//Exception Neutral
 		void resize(size_type size_in){
 			//testing if new size is smaller
-			if(size_in<size()){
-				for(value_type* i=_data+size_in;i<_data+_size;i++){
-					i->~value_type();
-				}
+			if(size_in<=size()){
 				_size=size_in;
 			}else{
 				//if need to resize
 				if(size_in>_alloc_size){
-
-					value_type *temp = new value_type[size_in];
-					std::copy(begin(),end(),temp);
-					_data= temp;
-					_alloc_size=size_in;
+					size_type t_size = std::max(5*_alloc_size/3,size_in);
+					value_type *temp = new value_type[t_size];
+					try{
+						std::copy(begin(),end(),temp);
+					}catch(...){
+						delete[] temp;
+						throw;
+					}
+					std::swap(temp,_data);
+					delete[] temp;
+					_alloc_size=t_size;
 					_size=size_in;
 				//if space is already allocated just need to run ctors
 				}else{
-					for(value_type* i=_data+_size;i<_data+size_in;i++){
-						i = new value_type();
-					}
+					std::fill(_data+_size,_data+size_in,value_type());
 					_size = size_in;
 				}
 				
 			}
 		}
-		//weak garuentee
+		//basic garentee
 		//pre: iter in range
+		//Exception Neutral
 		iterator insert(iterator iter,const value_type &ins){
 			if(iter>end()|| iter<begin()){
 				throw std::out_of_range("iterator out of range");
 			}
 			size_type index=iter-begin();
 			resize(size()+1);
+			_data[_size-1]=ins;
 			std::rotate(begin() + index, end()-1, end());	
-			//std::copy(begin()+index,end(),begin()+index+1);
-			_data[index]=ins;
 
 			return index+begin();
 		}
-		//weak garentee
+		//basic garentee
 		//pre: iter in range
+		//Exception Neutral
 		iterator erase(iterator elm){
 			if(elm>=begin()&&elm<end()){
-				elm->~value_type();
-				std::copy(elm+1,end(),elm);
-				_size--;
-				return elm;
+				size_type index = elm-begin();
+				std::rotate(elm,elm + 1, end());
+				resize(size()-1);
+				return index+begin();
 			}
 			throw std::out_of_range("iterator out of range");
 		}
-		//weak garentee
+		//nothrow guarentee
 		//pre: data is valid
+		//post: none
+		//exception neutral
 		iterator begin()noexcept{
 			return _data;
 		}
-		//weak garentee
+		//nothrow guarentee
 		//pre: data is valid
+		//post: none
+		//exception neutral
 		const_iterator begin()const noexcept{
 			return _data;
 		}
-		//weak garentee
+		//nothrow guarentee
 		//pre: data is valid
+		//post: none
+		//exception neutral
 		iterator end()noexcept{
 			return _data+_size;
 		}
-		//weak garentee
+		//nothrow guarentee
 		//pre: data is valid
+		//post: none
+		//exception neutral
 		const_iterator end()const noexcept{
 			return _data+_size;
 		}
-		//weak gaurentee
+		// gaurentee
 		//pre: data is valid
+		//exception neutral
 		void push_back(const value_type& in){
-			if(_size>=_alloc_size){
-				resize(size()+1);
-				_data[_size-1]=in;
-			}else{
-				_data[_size]=in;
-				_size++;
-			}
+			insert(end(),in);
 
 		}
+		//basic gaurentee
+		//pre: data is valid
+		//exception neutral
 		void pop_back(){
 			if(_size>=1){
 				end()->~value_type();
 				_size--;
 			}
 		}
+		//basic gaurentee
+		//pre: data is valid
+		//exception neutral
 		void swap(TSSArray &in)noexcept{
 			if(&in==this)
 				return;
-			T* temp = in._data;
-			size_type t_alloc = in._alloc_size;
-			size_type t_size = in._size;
-
-
-			in._data=_data;
-			in._alloc_size=_alloc_size;
-			in._size=_size;
-
-
-			_data=temp;
-			_alloc_size=t_alloc;
-			_size=t_size;
+			std::swap(_data,in._data);
+			std::swap(_size,in._size);
+			std::swap(_alloc_size,in._alloc_size);
 		}
 
 		
 
 		~TSSArray(){
-			if(_data!=nullptr)
 				delete[] _data;
 
 		}
