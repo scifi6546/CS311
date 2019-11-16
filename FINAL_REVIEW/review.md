@@ -107,13 +107,19 @@ A class invariant is a precondition of every public member function, except ctor
 A class invariant is a postcondition of every public member function, except dctors
 ## Given a description of a function, write reasonable pre- and postconditions for the function.
     Given a description of a class, write reasonable class invariants.
-    Your instructor says that talking about “the constructor” (as opposed to “a constructor”) usually indicates that there is a misunderstanding. What is this misunderstanding?
-    Your instructor says that the first goal, when writing code, should be to get it to compile. Why is this? What important advantage do we lose when we work on code for an extended time without being able to compile it?
-    Some people are in the habit of writing a whole bunch of code, saying, “I’m done,” and then trying to compile it for the first time. Your instructor replies, “No, you’re not done; you just started.” Explain.
+## Your instructor says that talking about “the constructor” (as opposed to “a constructor”) usually indicates that there is a misunderstanding. What is this misunderstanding?
+   There are several ctors
+## Your instructor says that the first goal, when writing code, should be to get it to compile. Why is this? What important advantage do we lose when we work on code for an extended time without being able to compile it?
+  The code can be tested when it can compile
+## Some people are in the habit of writing a whole bunch of code, saying, “I’m done,” and then trying to compile it for the first time. Your instructor replies, “No, you’re not done; you just started.” Explain.
+  the code has never been tested 
     What is wrong with writing (say) a bracket operator for an array class, that takes an int parameter? What would be a better choice for the parameter type?
-    What does the destructor of a pointer do?
-    What does it mean to release a resource? Give an example of a specific resource, and indicate exactly what it means to release this resource.
-    What do we mean by ownership?
+## What does the destructor of a pointer do?
+    noting ya brat!
+## What does it mean to release a resource? Give an example of a specific resource, and indicate exactly what it means to release this resource.
+    the resource can be used by others usually means that it is usuably by the os. 
+	For example free()
+## What do we mean by ownership?
     RAII is misleading, but standard, terminology. What does it really mean? (I am not asking what it stands for.)
     What kinds of troubles does RAII help to prevent?
     Give an example of a C++ Standard Library class or class template that uses RAII.
@@ -402,7 +408,7 @@ algo keeps track of its performance
     best: nlogn
 	worst: nlogn
 ## Is Introsort stable?
-	yes
+	no
 
 
 Note. We have not yet covered the material for the following topics.

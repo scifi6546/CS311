@@ -1,8 +1,12 @@
+/*Nicholas Alexeev
+ * 2019-10-06
+ * purpose: source code of counthar
+ */
 #include "counthar.h"
 #include <vector>
 struct Vec2{int x=0;int y=0;};
-int countRec(std::vector<Vec2> been,
-		Vec2 dim,Vec2 hole, Vec2 pos, Vec2 finish){
+int countRec(std::vector<Vec2> &been,
+		Vec2 dim,Vec2 hole, Vec2 pos, Vec2 finish,unsigned char n_rec){
 	//check current pos to see if in been
 	//if true return 0
 	
@@ -30,37 +34,24 @@ int countRec(std::vector<Vec2> been,
 	if(pos.x==finish.x && pos.y==finish.y){
 		//check if all spots are used
 		//creating board
-		std::vector<Vec2> holes;
-		holes.reserve(dim.x*dim.y);
-		for(int i=0;i<dim.x;i++){
-			for(int j=0;j<dim.y;j++){
-				holes.push_back({i,j});
-			}
-		}
-		//removing points that have been visited
-		for(int i=0;i<been.size();i++){
-			Vec2 temp = been[i];
-			for(int j=0;j<holes.size();j++){
-				if(temp.x==holes[j].x && temp.y==holes[j].y){
-					holes.erase(j+holes.begin());
-				}
-			}
-		}
-		//there should be 2 unvisited points, the hole and the finish
-		if(holes.size()==2){
+		if(been.size()==(dim.x*dim.y-2))
 			return 1;
-		}
 		return 0;
 	}
 	
 	//add pos to been
-	been.push_back(pos);
+	std::vector<Vec2> been_new = been;
+	been_new.push_back(pos);
 	//recursivly call countRec for 4 directions
 	return 
-		countRec(been,dim,hole,{pos.x-1,pos.y},finish)+
-		countRec(been,dim,hole,{pos.x+1,pos.y},finish)+
-		countRec(been,dim,hole,{pos.x,pos.y-1},finish)+
-		countRec(been,dim,hole,{pos.x,pos.y+1},finish);
+		countRec(been_new,dim,hole,{pos.x-1,pos.y},
+				finish,n_rec+1)+
+		countRec(been_new,dim,hole,{pos.x+1,pos.y},
+				finish,n_rec+1)+
+		countRec(been_new,dim,hole,{pos.x,pos.y-1},
+				finish,n_rec+1)+
+		countRec(been_new,dim,hole,{pos.x,pos.y+1},
+				finish,n_rec+1);
 }
 int countHAR(int dim_x,int dim_y,
 		int hole_x,int hole_y,
@@ -68,6 +59,5 @@ int countHAR(int dim_x,int dim_y,
 		int finish_x,int finish_y){
 	std::vector<Vec2> been={};
 	return countRec(been,{dim_x,dim_y},{hole_x,hole_y},
-			{start_x,start_y},{finish_x,finish_y});
-	//todo check if every tile is visited.
+			{start_x,start_y},{finish_x,finish_y},0);
 }

@@ -1,4 +1,4 @@
-CFLAGS = -Wall -std=c++17 -ggdb -o0 -Wreorder
+CFLAGS = -Wall -std=c++17 -ggdb -o3 -Wreorder
 CC=g++
 main:
 	$(MAKE) catch
@@ -14,6 +14,9 @@ counthar:
 run:
 	$(MAKE) main
 	./out
+time:
+	$(MAKE) main
+	time ./out
 grind:
 	$(MAKE) main
 	valgrind --leak-check=full ./out
