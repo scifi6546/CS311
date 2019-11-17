@@ -24,12 +24,14 @@
 // Sort a given range using Treesort.
 // Invariants
 // Data is valid, left and right node point to valid memory
+// not to be used by client code
 template <typename T>
 class Node{
 	public:
 		//pre data_in is valid
 		//exception neutral
 		Node(T&& data_in):data(std::move(data_in)){};
+		//pre: node is valid
 		//exception neutral
 		Node(Node<T>* n):data(std::move(n->data)),left(std::move(n->left)),right(std::move(n->right)){};
 	T data;
@@ -40,6 +42,7 @@ class Node{
 //takes ownership of data
 //pre: root is valid and modifies root
 //post root has new data in it
+//not to be used by client code
 template <typename T>
 void insert(T&& data, Node<T> *root){
 	if(data < root->data){
@@ -59,6 +62,7 @@ void insert(T&& data, Node<T> *root){
 //Writes binary tree to iterator
 //pre: root is valid data
 //post: root has no data in it
+//not to be used by client code
 template<typename Iter,typename T>
 Iter return_list(Iter iter,Node<T> *root){
 	if(root->left!=nullptr){
