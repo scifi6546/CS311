@@ -11,6 +11,7 @@
 using std::function;
 
 //prereq ff is a staic function that does not modify any state anywhere
+//throws whatever ff throws when operator() is called
 void didItThrow(const function<void()> & ff,
                 bool & threw)
 {
@@ -36,7 +37,5 @@ int gcd(int a,
 	}else{
 		return gcd(b%a,a);
 	}
-    return 42;  // Dummy return
-    // TODO: Write this!!!
 }
 

@@ -1,5 +1,6 @@
 // dp3.h  SKELETON
-// Glenn G. Chappell
+// Nicholas ALexeev with 
+// contributions from Glenn G. Chappell
 // 2019-09-24
 //
 // For CS 311 Fall 2019
@@ -65,7 +66,7 @@ struct LLNode {                                                     // *
 // Do not alter the lines above                                     // *
 // **************************************************************** // *
 
-
+//pre: accessing _next will not lead to forbidden memory
 template <typename ValueType>
 ValueType lookup(const LLNode<ValueType> * head,
                  std::size_t index)
@@ -89,7 +90,8 @@ ValueType lookup(const LLNode<ValueType> * head,
 void didItThrow(const std::function<void()> & ff,
                 bool & threw);
 
-//pre FDIter is a ptr and the item that fditer is pointing to has < operator
+//pre: item fditer is pointing to has < operator
+//pre: FDIter has ++ and = copy ctor operator
 template <typename FDIter>
 bool checkSorted(FDIter first,
                  FDIter last)
