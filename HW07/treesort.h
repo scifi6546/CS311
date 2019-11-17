@@ -1,6 +1,6 @@
 // treesort.h  SKELETON
-// Glenn G. Chappell
-// 2019-11-10
+// Nicholas Alexeev with contributions from Glenn G. Chappell
+// 2019-11-17
 //
 // For CS 311 Fall 2019
 // Header for function template treesort
@@ -20,23 +20,26 @@
 #include <memory>
 
 
-// treesort
+// Binary Tree node
 // Sort a given range using Treesort.
-// Pre:
-//     ???
-// Requirements on Types:
-//     ???
-// Exception safety guarantee:
-//     ???
+// Invariants
+// Data is valid, left and right node point to valid memory
 template <typename T>
 class Node{
 	public:
+		//pre data_in is valid
+		//exception neutral
 		Node(T&& data_in):data(std::move(data_in)){};
+		//exception neutral
 		Node(Node<T>* n):data(std::move(n->data)),left(std::move(n->left)),right(std::move(n->right)){};
 	T data;
 	std::unique_ptr<Node<T>> left=nullptr;
 	std::unique_ptr<Node<T>> right=nullptr;
 };
+//Inserts into binary tree node
+//takes ownership of data
+//pre: root is valid and modifies root
+//post root has new data in it
 template <typename T>
 void insert(T&& data, Node<T> *root){
 	if(data < root->data){
@@ -53,6 +56,9 @@ void insert(T&& data, Node<T> *root){
 		insert(std::move(data),root->right.get());
 	}
 }
+//Writes binary tree to iterator
+//pre: root is valid data
+//post: root has no data in it
 template<typename Iter,typename T>
 Iter return_list(Iter iter,Node<T> *root){
 	if(root->left!=nullptr){
@@ -66,6 +72,14 @@ Iter return_list(Iter iter,Node<T> *root){
 	}
 	return iter;
 }
+// treesort
+// Sort a given range using Treesort.
+// Pre:
+//     Iteraters are Valid
+// Requirements on Types:
+//     Types have move ctor, operator<
+// Exception safety guarantee:
+//     Exception Neutral
 template<typename FDIter>
 void treesort(FDIter first, FDIter last)
 {
