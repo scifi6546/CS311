@@ -31,7 +31,7 @@
 template <typename T>
 class Node{
 	public:
-		Node(T&& data):data(std::move(data)){};
+		Node(T&& data_in):data(std::move(data_in)){};
 		Node(Node<T>* n):data(std::move(n->data)),left(std::move(n->left)),right(std::move(n->right)){};
 	T data;
 	std::unique_ptr<Node<T>> left=nullptr;
@@ -80,7 +80,8 @@ void treesort(FDIter first, FDIter last)
 
     while(item!=last){
 	    auto temp = std::move_iterator(item);
-		insert(std::move(*temp),root);	
+		insert(*temp,root);	
+		temp->~ValType();
 		item++;
     }
 	
