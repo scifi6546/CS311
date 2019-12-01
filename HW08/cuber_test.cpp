@@ -23,7 +23,7 @@ class Copy {
 TEST_CASE("Testing required constructors"){
 	Cuber cc;
 	Copy c;
-	//REQUIRE(cc(c).get()==8);
+	REQUIRE(cc(c).get()==8);
 }
 TEST_CASE("Testing Aritmatic"){
 	Cuber cc;
