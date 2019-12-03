@@ -1,3 +1,7 @@
+//Nicholas Alexeev
+//16:59 Dec 3 2019
+//Purpose: gets statists from file
+//GPLv3.0
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -5,11 +9,13 @@
 #include <vector>
 #include <algorithm>
 
+//pre: none
+//post: statiscs are printed to screen
 int main(){
 	std::string fname;
 	std::cout<<"choose file:\n";
 	std::getline(std::cin,fname);
-	std::ifstream ifs (fname, std::ifstream::in);
+	std::ifstream ifs(fname, std::ifstream::in);
 	std::map<std::string,std::vector<std::string>> dict;
 
 	if(ifs.good()){
@@ -18,9 +24,6 @@ int main(){
 		std::string current="";
 		std::cout<<"opened "<<fname<<"\n";
 		while(0==0){
-			if(ifs.eof()){
-				break;
-			}
 			current="";
 			ifs>>current;
 			if(ifs.eof()){

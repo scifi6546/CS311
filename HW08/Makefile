@@ -1,2 +1,2 @@
 main: cuber_test.cpp
-	g++ cuber_test.cpp -o a.out
+	g++ -std=c++17 cuber_test.cpp -o a.out

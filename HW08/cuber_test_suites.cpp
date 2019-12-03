@@ -1,6 +1,6 @@
 //Nicholas Alexeev
 //16:59 Dec 3 2019
-//Purpose: gets statists from file
+//Purpose: tests cuber class
 //GPLv3.0
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
